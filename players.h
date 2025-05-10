@@ -8,7 +8,7 @@ extern Deck current_deck;
 class Player
 {
 public:
-    std::vector<Hand> hands/*={{1,1},{2,4},{12,2}}*/;
+    std::vector<Hand> hands;
     std::string _name;
 public:
     Player(std::string _name="player"): hands(1), _name(_name){}

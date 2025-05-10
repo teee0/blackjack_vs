@@ -117,7 +117,7 @@ void RealPlayer::choice(int hand_index)
             case 1: hit(hand_index); break;
             case 2: stand(hand_index); break;
             case 3: doubleDown(hand_index); break;
-            case 4: split(hand_index); break;//vezi daca se poate de mai multe ori
+            case 4: split(hand_index); break;
             case 5: surrender(); break;
             }
 
