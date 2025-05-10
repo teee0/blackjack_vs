@@ -8,6 +8,8 @@ https://stackoverflow.com/questions/41753358/creating-custom-exceptions-in-c
 https://www.geeksforgeeks.org/advanced-c-virtual-constructor/
 https://www.geeksforgeeks.org/dynamic-_cast-in-cpp/
 https://stackoverflow.com/questions/3901630/in-a-i-vector-size-loop-condition-is-size-called-each-iteration
+https://www.geeksforgeeks.org/advanced-c-virtual-copy-constructor/
+https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
 
 *ierarhie de clase:
 baza: Player

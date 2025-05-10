@@ -47,7 +47,14 @@ RealPlayer::RealPlayer():Player()
     std::cout << "Nume: ";
     std::cin >> _name;
 }
-
+Player* RealPlayer::clone() const
+{
+    return new RealPlayer(*this);
+}
+Player* Dealer::clone() const
+{
+    return new Dealer(*this);
+}
 void RealPlayer::doubleDown(int hand_index)
 {
     change_wager(hand_index, hands[hand_index].wager());
@@ -77,7 +84,7 @@ void RealPlayer::place_bet(int handIndex)
 {
     double bet;
     std::cout<<"Câte jetoane pui în joc? (acum ai: " <<deposit<<")\n";
-    while (!(std::cin >> bet) || bet < 5 || bet > deposit)
+    while (!(std::cin >> bet) || bet > deposit)
     {
         throw InvalidBetException(bet);
         std::cin.clear();
@@ -92,7 +99,11 @@ void RealPlayer::add_to_deposit(double suma)
     std::cout<<std::fixed<<std::setprecision(2)<<
     "Suma de "<<suma<<" a fost returnată.\n";
 }
-
+void RealPlayer::change_wager(int hand_index, double new_wager)
+    {
+        deposit -= new_wager-hands[hand_index].wager();
+        hands[hand_index].change_wager(new_wager);
+    }
 std::string actions = "\
 [1]: Hit\n\
 [2]: Stand\n\
@@ -134,3 +145,8 @@ void Dealer::choice(int hand_index)
     else stand();
 }
 
+bool Player::can_take_cards(){
+    bool rez=0;
+    for(auto hand: hands) rez|=hand.can_take_cards();
+    return rez;
+}

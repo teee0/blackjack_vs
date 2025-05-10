@@ -12,16 +12,14 @@ public:
     std::string _name;
 public:
     Player(std::string _name="player"): hands(1), _name(_name){}
-    ~Player(){}
+    virtual ~Player() = default;
+    virtual Player* clone() const = 0;
 
+    //detalii
     virtual void show_cards(int hand_index = 0, bool hide_second_card = false) const=0;
     std::string name() {return _name;}
     int hands_count(){return hands.size();}
-    bool can_take_cards(){
-        bool rez=0;
-        for(auto hand: hands) rez|=hand.can_take_cards();
-        return rez;
-    }
+    bool can_take_cards();
     int score(int hand_index = 0) {return hands[hand_index].sum();}
     void stop(int hand_index = 0) {hands[hand_index].stop();}
 
@@ -39,9 +37,12 @@ public:
 class Dealer : public Player
 {
     public:
+    Dealer(std::string _name="player"): Player(_name){}
+    Player* clone() const;
+
     void choice(int hand_index = 0);
     void show_cards(int hand_index=0, bool hide_second_card=false) const;
-    Dealer(std::string _name="player"): Player(_name){}
+    
 };
 
 class RealPlayer : public Player
@@ -51,6 +52,7 @@ private:
     bool hasSurrendered = 0;
 public:
     RealPlayer();
+    Player* clone() const;
     //acțiuni
     void doubleDown(int hand_index = 0);
     void surrender();
@@ -61,12 +63,8 @@ public:
     bool can_surrender(int hand_index = 0);
     //puncte
     void add_to_deposit(double);
-    double wager(double hand_index = 0){ return hands[hand_index].wager(); }//da nu mere e de aici
-    void change_wager(int hand_index, double new_wager)
-    {
-        deposit -= new_wager-hands[hand_index].wager();
-        hands[hand_index].change_wager(new_wager);
-    }
+    double wager(double hand_index = 0){ return hands[hand_index].wager(); }
+    void change_wager(int hand_index, double new_wager);
     void place_bet(int handIndex = 0);
     //afișări
     void show_cards(int hand_index, bool hide_second_card=false) const;

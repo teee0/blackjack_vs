@@ -13,6 +13,10 @@ public:
     ~Runda() {
         for (auto p : jucatori) delete p;
     }
+    Runda(const Runda&);
+    friend void swap(Runda& r1, Runda& r2) noexcept;
+    Runda& operator=(Runda ob);
+
     void start();
     void first_round();
     void game_loop();

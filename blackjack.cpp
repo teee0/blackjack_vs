@@ -1,8 +1,18 @@
 #include "blackjack.h"
 
 
-
-
+void swap(Runda& r1, Runda& r2) noexcept {
+    std::swap(r1, r2);
+}
+Runda& Runda::operator=(Runda ob) {
+    if (this != &ob)
+        swap(*this, ob);
+    return *this;
+}
+Runda::Runda(const Runda& ob) {
+    for (auto p : ob.jucatori)
+        jucatori.push_back(p->clone());
+}
 void Runda::start()
 {
     std::cout << std::setfill('~') << std::setw(40) << "BlackJack" << std::setw(40) <<" "<< std::endl;
