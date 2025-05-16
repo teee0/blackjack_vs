@@ -23,7 +23,7 @@ void Player::hit(int hand_index)
     try{
         hands[hand_index].push(current_deck.give());
     }
-    catch(BlackjackException)
+    catch(EmptyDeckException er)
     {
         Deck new_deck;
         current_deck=new_deck;
