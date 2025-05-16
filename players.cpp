@@ -20,7 +20,15 @@ bool RealPlayer::can_surrender(int hand_index)
 
 void Player::hit(int hand_index)
 {
-    hands[hand_index].push(current_deck.give());
+    try{
+        hands[hand_index].push(current_deck.give());
+    }
+    catch(BlackjackException)
+    {
+        Deck new_deck;
+        current_deck=new_deck;
+        hands[hand_index].push(current_deck.give());
+    }
 }
 void Player::stand(int hand_index)
 {
@@ -32,13 +40,13 @@ int Player::checkState(int hand_index)
       1=pierdut
       2=câștigat*/
     auto& hand = hands[hand_index];
-    if      (hand.sum() > 21) {hand.set_last_state_text ("a pierdut!\n"); stop(); return 1;}
+    if      (hand.sum() > 21) {hand.set_last_state_text ("a pierdut!\n"); stop(hand_index); return 1;}
     else if (hand.size() == 5) hand.set_last_state_text ("a câștigat având 5 cărți!\n");
-    else if (hand.sum() == 21) hand.set_last_state_text ("a câștigat cu un blackjack!\n");
+    else if (hand.sum() == 21 || (hand.sum() + 10 == 21 && hand.hasAce())) hand.set_last_state_text ("a câștigat cu un blackjack!\n");
     else if (hand.sum() + 10 == 21 && hand.hasAce() && hand.size() == 2) 
                                hand.set_last_state_text ("a câștigat cu un blackjack din prima!\n");  
     else return 0; 
-    stop();
+    stop(hand_index);
     return 2; 
 }
 
@@ -84,13 +92,20 @@ void RealPlayer::place_bet(int handIndex)
 {
     double bet;
     std::cout<<"Câte jetoane pui în joc? (acum ai: " <<deposit<<")\n";
-    while (!(std::cin >> bet) || bet > deposit)
+    while(true)
     {
-        throw InvalidBetException(bet);
-        std::cin.clear();
-        std::cin.ignore(1000, '\n');
-        std::cout << "Input invalid; Încercă iar\n";
+        try{
+            if(!(std::cin >> bet) || bet > deposit) throw InvalidBetException();
+            break;
+        }
+        catch(InvalidBetException er)
+        {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            std::cout << er.what()<< '\n';
+        }
     }
+
     change_wager(handIndex, bet);
 }
 void RealPlayer::add_to_deposit(double suma)
@@ -114,25 +129,33 @@ void RealPlayer::choice(int hand_index)
 {   Hand hand = hands[hand_index];
     std::cout<<actions<<'\n';
     if (!hand.can_take_cards()) std::cout<<"Mâna "<<hand_index+1<<" nu mai poate lua cărți\n";
-        else{
-            bool canDo[5] = { 1, 1, can_double_down(hand_index), hand.can_split(), can_surrender() };
+    else{
+        bool canDo[5] = { 1, 1, can_double_down(hand_index), hand.can_split(), can_surrender() };
 
-            std::cout<<"Alegere"<<(hands_count()>1?" mână "+std::to_string(hand_index+1):"")<<": ";
-            int input;
-            while (!(std::cin >> input) || input < 1 || input > 5 || !canDo[input-1]) {
+        std::cout<<"Alegere"<<(hands_count()>1?" mână "+std::to_string(hand_index+1):"")<<": ";
+        int input;
+        while(true)
+        {
+            try{
+                if(!(std::cin >> input) || input < 1 || input > 5 || !canDo[input-1]) throw InvalidActionException();
+                break;
+            }
+            catch(InvalidActionException er)
+            {
                 std::cin.clear();
                 std::cin.ignore(1000, '\n');
-                std::cout << "Input invalid; Încearcă iar\n";
+                std::cout << er.what()<< '\n';
             }
-            switch (input) {
-            case 1: hit(hand_index); break;
-            case 2: stand(hand_index); break;
-            case 3: doubleDown(hand_index); break;
-            case 4: split(hand_index); break;
-            case 5: surrender(); break;
-            }
-
         }
+        switch (input) {
+        case 1: hit(hand_index); break;
+        case 2: stand(hand_index); break;
+        case 3: doubleDown(hand_index); break;
+        case 4: split(hand_index); break;
+        case 5: surrender(); break;
+        }
+
+    }
 }
 void Dealer::choice(int hand_index)
 {

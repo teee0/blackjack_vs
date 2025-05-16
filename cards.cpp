@@ -39,9 +39,9 @@ Deck::Deck(Deck& ob)
 
 Card Deck::give()
 {
-    Card card = cards.back();
     if (cards.empty())
-        throw CardDeckEmptyException();
+            throw EmptyDeckException();
+    Card card = cards.back();
     cards.pop_back();
     return card;
 }

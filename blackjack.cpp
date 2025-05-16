@@ -40,7 +40,7 @@ void Runda::first_round()
         jucator->show_cards(0,true);  
     }
 }
-
+enum states{PLAYING, LOST, WON};
 void Runda::game_loop()
 {
     while(1)
@@ -55,20 +55,23 @@ void Runda::game_loop()
                 if(jucator->hands_count() > 1)
                     std::cout << "\tMâna " << i+1 << ": " ;
                 jucator->show_cards(i);
-                if      (jucator->checkState(i)==1)
+
+                int state = jucator->checkState(i);
+
+                if (state == LOST)
                 {
-                    std::cout<<jucator->last_state_text(i)<<'\n';
+                    std::cout << jucator->last_state_text(i) << '\n';
                     jucator->stop(i);
                 }
-                else if (jucator->checkState(i)==2)
+                else if (state == WON)
                 {
-                    std::cout<<jucator->last_state_text(i)<<'\n';
-                    if(jucator->name() != "dealer")
-                        {
-                            RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
-                            rp->add_to_deposit(rp->wager(i));
-                        }
-                    return;
+                    std::cout << jucator->last_state_text(i) << '\n';
+                    jucator->stop(i);
+                    if (jucator->name() != "dealer")
+                    {
+                        RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
+                        rp->add_to_deposit(rp->wager(i));
+                    }
                 }
                 else jucator->choice(i);
                 //alegerea jucatorului
@@ -116,20 +119,23 @@ void Runda::game_loop()
             for(int i=0; i<jucatori.size()-1; i++)
             {
                 auto jucator = jucatori[i];
-                std::cout<<jucator->name();
-                if(jucator->checkState(i)!=1 && jucator->score(i) > jucatori.back()->score())
+                for (int hand_index = 0; hand_index < jucator->hands_count(); hand_index++) 
                 {
-                    
-                    std::cout <<" a câștigat!\n";
-                    if(jucator->name() != "dealer")
-                        {
-                            RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
-                            rp->add_to_deposit(rp->wager(i));
-                        }
-                    castiga_dealeru=false;
+                    std::cout<<jucator->name();
+                    if(jucator->checkState(hand_index)!=1 && jucator->score(hand_index) > jucatori.back()->score())
+                    {
+                        
+                        std::cout <<" a câștigat!\n";
+                        if(jucator->name() != "dealer")
+                            {
+                                RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
+                                rp->add_to_deposit(rp->wager(hand_index));
+                            }
+                        castiga_dealeru=false;
+                    }
+                    else
+                        std::cout<< " a pierdut!\n";
                 }
-                else
-                    std::cout<< " a pierdut!\n";
             }   
             if(castiga_dealeru) std::cout<<"dealerul câștigă!\n";
             return;

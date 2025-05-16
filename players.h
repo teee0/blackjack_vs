@@ -20,7 +20,11 @@ public:
     std::string name() {return _name;}
     int hands_count(){return hands.size();}
     bool can_take_cards();
-    int score(int hand_index = 0) {return hands[hand_index].sum();}
+    int score(int hand_index = 0) {
+        int s = hands[hand_index].sum();
+        if(hands[hand_index].hasAce() && s+10<=21) return s+10; 
+        return s;
+        }
     void stop(int hand_index = 0) {hands[hand_index].stop();}
 
     void hit(int hand_index = 0);
