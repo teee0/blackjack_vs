@@ -113,3 +113,12 @@ std::ostream& operator<< (std::ostream &out, const Hand& ob)
     ob.show_cards();//inlocuieste eventual
     return out;
 }
+
+template <typename T>
+bool isSorted(const T& min, const T& val, const T& max) {
+    return val > min && val < max;
+}
+template <>
+bool isSorted(const Card<>& val, const Card<>& min, const Card<>& max) {
+    return val.number > min.number && val.number < max.number;
+}

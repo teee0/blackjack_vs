@@ -13,13 +13,6 @@
 
 #include "blackjack_exception.h"
 
-template <typename T>
-auto find_next(const std::list<T>& set, const T& val) {
-    auto it = std::find(std::begin(set), std::end(set), val);
-    if (it != set.end()) it++;
-    return it;
-}
-
 struct SpelledOutFormat {
     static const std::string print_suits[4];
     static std::string format(int suit_id) {
@@ -48,7 +41,8 @@ public:
     {
         return real_value==c.real_value;
     }
-
+    template <typename T>
+    friend bool isSorted(const T& val, const T& min, const T& max);
     void show() const;
     int get_value() const {return real_value;}
 };
@@ -105,5 +99,17 @@ public:
     void show_cards(bool hide_second_card = false) const;
     friend std::ostream& operator<< (std::ostream &, const Hand&);
 };
+
+template <typename T>
+auto find_next(const std::list<T>& set, const T& val) {
+    auto it = std::find(std::begin(set), std::end(set), val);
+    if (it != set.end()) it++;
+    return it;
+}
+
+template <typename T>
+bool isSorted(const T& min, const T& val, const T& max);
+template <>
+bool isSorted(const Card<>& val, const Card<>& min, const Card<>& max);
 
 #endif

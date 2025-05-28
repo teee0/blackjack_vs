@@ -12,6 +12,7 @@ https://www.geeksforgeeks.org/advanced-c-virtual-copy-constructor/
 https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
 https://refactoring.guru/design-patterns/factory-comparison
 https://www.geeksforgeeks.org/factory-method-pattern-c-design-patterns/
+https://stackoverflow.com/questions/9323903/most-efficient-elegant-way-to-clip-a-number
 
 *ierarhie de clase:
 baza: Player
