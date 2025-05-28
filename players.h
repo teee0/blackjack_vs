@@ -25,7 +25,7 @@ public:
     void stop() {hand.stop();}
     void hit();
     void stand();
-    virtual void choice(std::vector<Player*>& jucatori) = 0;
+    virtual void choice(std::list<Player*>& jucatori) = 0;
 
     int checkState();
 
@@ -40,7 +40,7 @@ class Dealer : public Player
     Dealer(std::string _name="player"): Player(_name){}
     Player* clone() const;
 
-    void choice(std::vector<Player*>& jucatori);
+    void choice(std::list<Player*>& jucatori);
     
     void show_cards(bool hide_second_card) const;
     
@@ -59,8 +59,8 @@ public:
     //acțiuni
     void doubleDown();
     void surrender();// de inclocuit cu partea comentata
-    virtual void split(std::vector<Player*>& jucatori);
-    void choice(std::vector<Player*>& jucatori);
+    virtual void split(std::list<Player*>& jucatori);
+    void choice(std::list<Player*>& jucatori);
     //detalii
     bool can_double_down();
     bool can_surrender();
@@ -78,7 +78,31 @@ class GhostPlayer : public RealPlayer
 private:
 public:
     GhostPlayer(RealPlayer* rp, Hand hand);
-    friend void add_player(GhostPlayer* p, std::vector<Player*>& jucatori);
+    friend void insert_player(GhostPlayer* p, std::list<Player*>& jucatori);
 };
  
+class PlayerFactory {
+public:
+    virtual ~PlayerFactory() = default;
+    virtual Player* createPlayer() = 0;
+};
+
+class RealPlayerFactory : public PlayerFactory {
+public:
+    Player* createPlayer() { return new RealPlayer();}
+};
+
+class DealerFactory : public PlayerFactory {
+public:
+    Player* createPlayer() { return new Dealer("dealer"); }
+};
+
+class GhostPlayerFactory : public PlayerFactory {
+    RealPlayer* jucator_asociat;
+    Hand hand;
+public:
+    GhostPlayerFactory(RealPlayer* rp, Hand h) : jucator_asociat(rp), hand(h) {}
+    Player* createPlayer() { return new GhostPlayer(jucator_asociat, hand); }
+};
+
 #endif

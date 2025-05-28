@@ -1,25 +1,34 @@
 #include "cards.h"
 Deck current_deck;
 
-const std::string Card::print_values[13] = {
+template <typename SuitFormat>
+const std::string Card<SuitFormat>::print_values[13] = {
     "A","2","3","4","5","6","7","8","9","10","J","Q","K"
 };
 
-const std::string Card::print_suits[4] = {
+const std::string SpelledOutFormat::print_suits[4] = {
     "Spade","Heart","Diamond","Club"
 };
 
-Card::Card(int number, int suit): number(number), suit(suit)
+const std::string UnicodeFormat::print_suits[4] = 
+{
+    "♠","♥","♦","♣"
+};
+template <typename SuitFormat>
+Card<SuitFormat>::Card(int number, int suit): number(number), suit(suit)
 {
     if(number>10) real_value = 10;
     else real_value = number;
 }
-void Card::show() const
+
+template <typename SuitFormat>
+void Card<SuitFormat>::show() const
 {
-    std::cout << print_values[number-1] << print_suits[suit-1];
+    std::cout << print_values[number-1] << SuitFormat::format(suit-1);
 }
 
-std::ostream& operator<< (std::ostream &out, const Card& ob)
+template <typename SuitFormat>
+std::ostream& operator<< (std::ostream &out, const Card<SuitFormat>& ob)
 {
     ob.show();//inlocuieste eventual
     return out;
@@ -29,7 +38,7 @@ Deck::Deck()
 {
     for(int iValue=1; iValue<=13; iValue++)
         for(int iSuit=1; iSuit<=4; iSuit++)
-            cards.push_back(Card(iValue,iSuit));
+            cards.push_back(Card<>(iValue,iSuit));
     shuffle();
 }
 Deck::Deck(Deck& ob)
@@ -37,11 +46,11 @@ Deck::Deck(Deck& ob)
     cards=ob.cards;
 }
 
-Card Deck::give()
+Card<> Deck::give()
 {
     if (cards.empty())
             throw EmptyDeckException();
-    Card card = cards.back();
+    Card<>card = cards.back();
     cards.pop_back();
     return card;
 }
@@ -55,7 +64,8 @@ void Hand::pop()
 {
 	cards.pop_back();
 }
-void Hand::push(Card c)
+
+void Hand::push(Card<>c)
 {
 	cards.push_back(c);
     if(c.get_value()==1) _hasAce=true;

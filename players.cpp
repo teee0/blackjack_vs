@@ -53,13 +53,20 @@ int Player::checkState()
     /*0=nimic
       1=pierdut
       2=câștigat*/
-    if      (hand.sum() > 21) {hand.set_last_state_text ("a pierdut!\n"); stop(); return 1;}
-    else if (hand.size() == 5) hand.set_last_state_text ("a câștigat având 5 cărți!\n");
-    else if (hand.sum() == 21 || (hand.sum() + 10 == 21 && hand.hasAce())) hand.set_last_state_text ("a câștigat cu un blackjack!\n");
+    if (hand.sum() > 21) {
+        hand.set_last_state_text ("a pierdut"); 
+        stop(); 
+        return 1;
+    }
+    else if (hand.size() == 5) 
+        hand.set_last_state_text ("a câștigat având 5 cărți");
+    else if (hand.sum() == 21 || (hand.sum() + 10 == 21 && hand.hasAce())) 
+        hand.set_last_state_text ("a câștigat cu un blackjack");
     else if (hand.sum() + 10 == 21 && hand.hasAce() && hand.size() == 2) 
-                               hand.set_last_state_text ("a câștigat cu un blackjack din prima!\n");  
+        hand.set_last_state_text ("a câștigat cu un blackjack din prima");  
     else return 0; 
     stop();
+
     return 2; 
 }
 
@@ -88,19 +95,20 @@ void RealPlayer::surrender()
 {
     hasSurrendered = 1;
     hand.stop();
-    hand.set_last_state_text ("chose to surrender!");
+    hand.set_last_state_text ("a dat surrender");
     add_to_deposit(hand.wager()/2);//n-are cum să fie alta decât prima
 }
 
-void RealPlayer::split(std::vector<Player*>& jucatori)
+void RealPlayer::split(std::list<Player*>& jucatori)
 {
     jucator_asociat->split_count++;
 
     Hand new_hand;
     new_hand = hand.split();
 
-    GhostPlayer *gp = new GhostPlayer(jucator_asociat, new_hand);
-    add_player(gp, jucatori);
+    GhostPlayerFactory ghostFactory(jucator_asociat, new_hand);
+    GhostPlayer* gp = static_cast<GhostPlayer*>(ghostFactory.createPlayer());
+    insert_player(gp, jucatori);
 
     deposit -= new_hand.wager();
     hit();
@@ -146,10 +154,15 @@ std::string actions = "\
 [4]: Split\n\
 [5]: Surrender";
 
-void RealPlayer::choice(std::vector<Player*>& jucatori)
+void RealPlayer::choice(std::list<Player*>& jucatori)
 {
     std::cout<<actions<<'\n';
-    if (!hand.can_take_cards()) std::cout<<_name<<" nu mai poate lua cărți\n";
+    if (!hand.can_take_cards())
+    {
+        std::cout<<_name<<" nu mai poate lua cărți\n";
+        for (auto jucator : jucatori)
+            std::cout<<jucator->name()<<" "<<jucator->can_take_cards()<< "\n";
+    }
     else{
         bool canDo[5] = { 1, 1, can_double_down(), hand.can_split(), can_surrender() };
 
@@ -180,7 +193,7 @@ void RealPlayer::choice(std::vector<Player*>& jucatori)
 }
 
 
-void Dealer::choice(std::vector<Player*>& jucatori)
+void Dealer::choice(std::list<Player*>& jucatori)
 {
     if (hand.sum()<17 &&
         !(hand.hasAce() && hand.sum()+10>17 && hand.sum()+10<=21)) 
@@ -205,9 +218,11 @@ GhostPlayer::GhostPlayer(RealPlayer* rp, Hand hand)
     _name = _name + " mâna " + std::to_string(split_count+1);
 }
 
-void add_player(GhostPlayer* p, std::vector<Player*>& jucatori)
+void insert_player(GhostPlayer* p, std::list<Player*>& jucatori)
 {
-    auto it = std::find(jucatori.begin(), jucatori.end(), p->jucator_asociat);
-    if (it != jucatori.end()) jucatori.insert(it + 1, p);
-    else                      throw "nu e bun add_player";//jucatori.push_back(p);
+    auto it = find_next<Player*>(jucatori, p->jucator_asociat);
+    
+    if (it != jucatori.end()) 
+        jucatori.insert(it, p);
+    else throw "nu e bun insert_player";
 }

@@ -8,13 +8,37 @@
 #include <algorithm> //shuffle
 #include <random> //random_device
 #include <format>
+#include <list>
 #include <utility> //pair
 
 #include "blackjack_exception.h"
+
+template <typename T>
+auto find_next(const std::list<T>& set, const T& val) {
+    auto it = std::find(std::begin(set), std::end(set), val);
+    if (it != set.end()) it++;
+    return it;
+}
+
+struct SpelledOutFormat {
+    static const std::string print_suits[4];
+    static std::string format(int suit_id) {
+        return print_suits[suit_id];
+    }
+};
+
+struct UnicodeFormat {
+    static const std::string print_suits[4];
+    static std::string format(int suit_id) {
+        return print_suits[suit_id];
+    }
+};
+
+
+template <typename SuitFormat = UnicodeFormat>//posibil sa nu mearga in terminalul din windows folosind unicode dinafara ascii
 class Card
 {
     static const std::string print_values[13];
-    static const std::string print_suits[4];
     int number;
     int suit;
     int real_value;
@@ -31,12 +55,12 @@ public:
 
 class Deck
 {
-    std::vector<Card> cards;
+    std::vector<Card<>> cards;
 public:
     Deck();
     Deck(Deck&);
     void shuffle();
-    Card give();
+    Card<> give();
     void show_cards() const
     {    for (auto card : cards)
         card.show(), std::cout<<' ';
@@ -47,17 +71,17 @@ public:
 class Hand
 {
 private:
-    std::vector<Card> cards;
+    std::vector<Card<>> cards;
     bool _can_take_cards = 1;
     bool _hasSplit = 0;
     bool _hasAce = 0;
-    std::string _last_state_text="";
+    std::string _last_state_text="joacă";
     double _wager = 0;
 public:
     Hand(): cards() {}
     //modificare
     void pop();
-    void push(Card);
+    void push(Card<>);
     Hand split();
     
     //detalii

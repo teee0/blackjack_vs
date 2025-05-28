@@ -10,11 +10,15 @@ https://www.geeksforgeeks.org/dynamic-_cast-in-cpp/
 https://stackoverflow.com/questions/3901630/in-a-i-vector-size-loop-condition-is-size-called-each-iteration
 https://www.geeksforgeeks.org/advanced-c-virtual-copy-constructor/
 https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
+https://refactoring.guru/design-patterns/factory-comparison
+https://www.geeksforgeeks.org/factory-method-pattern-c-design-patterns/
 
 *ierarhie de clase:
 baza: Player
-derivata1: RealPlayer -- jucător real ce joacă de la tastatură
-derivata2: Dealer     -- bot
+derivata1: RealPlayer  -- jucător real ce joacă de la tastatură
+derivata2: GhostPlayer -- jucător fantomă asociat unui RealPlayer ce gestionează alt set de cărți al jucătorului
+derivata3: Dealer      -- bot
+
 
 *alte clase:
 Card:
