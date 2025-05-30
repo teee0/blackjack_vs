@@ -30,13 +30,24 @@ derivata3: Dealer      -- bot
 * PlayerFactory, RealPlayerFactory, GhostFactory, DealerFactory
 * RealPlayerStrategy, DealerStrategy 
 
+### funcții șablon
+* find_next  --  returnează iteratorul următorului element dintr-o listă
+template <typename T>
+auto find_next(const std::list<T>& set, const T& val);
+
+
+* isSorted  --  verifică dacă trei valori sunt în ordine crescătoare, are specializare pentru Card
+template <typename T>
+bool isSorted(const T& min, const T& val, const T& max);
+template <>
+bool isSorted(const Card<>& val, const Card<>& min, const Card<>& max);
 
 
 ### design patterns:
-strategy pattern: choice -- pentru player e prompt la tastatură
+* strategy pattern: choice -- pentru player e prompt la tastatură
 												  		 -- pt dealer este un algoritm
 												show_cards --simpla afisare ce tine cont ca a doua carte a dealerului este ascunsa in prima runda
-factory pattern: pentru creearea jucătorilor
+* factory pattern: pentru creearea jucătorilor
 
 ### altele
 * funcțiile de afișare sunt constante
