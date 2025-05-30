@@ -51,7 +51,7 @@ private:
     bool _can_take_cards = 1;
     bool _hasSplit = 0;
     bool _hasAce = 0;
-    std::string _last_state_text="";
+    std::string _last_state_text="joacă";
     double _wager = 0;
 public:
     Hand(): cards() {}

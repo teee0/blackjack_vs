@@ -22,6 +22,8 @@ void Runda::start()
     //for(no) cin etc
     int nr_jucatori;
     std::cout<<"Câți joacă: ", std::cin>>nr_jucatori;
+
+
     for(int i=1; i<=nr_jucatori; i++)
     {
         std::cout<<"\n("<<i<<") ";
@@ -38,7 +40,7 @@ void Runda::first_round()
         jucator->hit(), jucator->hit();
         
         std::cout << (jucator->name()) << ": ";
-        jucator->show_cards(true);  
+        jucator->show_cards(true);
     }
 }
 
