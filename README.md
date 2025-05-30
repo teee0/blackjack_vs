@@ -1,4 +1,4 @@
-bibliografie:
+### bibliografie:
 https://stackoverflow.com/questions/29859796/c-auto-vs-auto
 https://stackoverflow.com/questions/60386792/c20-comparison-warning-about-ambiguous-reversed-operator
 https://stackoverflow.com/questions/38942013/declaring-variables-in-header-files-c
@@ -15,25 +15,32 @@ https://www.geeksforgeeks.org/factory-method-pattern-c-design-patterns/
 https://stackoverflow.com/questions/9323903/most-efficient-elegant-way-to-clip-a-number
 https://stackoverflow.com/questions/3516196/testing-whether-an-iterator-points-to-the-last-item
 
-*ierarhie de clase:
+### ierarhie de clase:
 baza: Player
 derivata1: RealPlayer  -- jucător real ce joacă de la tastatură
 derivata2: GhostPlayer -- jucător fantomă asociat unui RealPlayer ce gestionează alt set de cărți al jucătorului
 derivata3: Dealer      -- bot
 
 
-*alte clase:
-Card:
-Hand:
-Deck:
+### alte clase:
+* Card<>: clasă șablon
+* Hand
+* Deck
+* Runda: clasa cu pointeri spre alte clase ca atribut este Runda
+* PlayerFactory, RealPlayerFactory, GhostFactory, DealerFactory
+* RealPlayerStrategy, DealerStrategy 
 
-*strategy pattern: choice -- pt player e prompt la tastatură
+
+
+### design patterns:
+strategy pattern: choice -- pentru player e prompt la tastatură
 												  		 -- pt dealer este un algoritm
 												show_cards --simpla afisare ce tine cont ca a doua carte a dealerului este ascunsa in prima runda
+factory pattern: pentru creearea jucătorilor
 
-*funcțiile de afișare sunt constante
+### altele
+* funcțiile de afișare sunt constante
 
-*clasa cu pointeri spre alte clase ca atribut este Runda
 
 
 
