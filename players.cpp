@@ -1,5 +1,7 @@
 #include "players.h"
 
+
+
 void RealPlayer::show_cards(bool hide_second_card) const
 {
     hand.show_cards();
@@ -74,6 +76,7 @@ RealPlayer::RealPlayer():Player(), jucator_asociat(this)
 {
     std::cout << "Nume: ";
     std::cin >> _name;
+    strategy = new RealPlayerStrategy();
     
 }
 Player* RealPlayer::clone() const
@@ -147,62 +150,7 @@ void RealPlayer::change_wager(double new_wager)
     deposit -= new_wager-hand.wager();
     hand.change_wager(new_wager);
 }
-std::string actions = "\
-[1]: Hit\n\
-[2]: Stand\n\
-[3]: Double down\n\
-[4]: Split\n\
-[5]: Surrender";
 
-void RealPlayer::choice(std::list<Player*>& jucatori)
-{
-    std::cout<<actions<<'\n';
-    if (!hand.can_take_cards())
-    {
-        std::cout<<_name<<" nu mai poate lua cărți\n";
-        for (auto jucator : jucatori)
-            std::cout<<jucator->name()<<" "<<jucator->can_take_cards()<< "\n";
-    }
-    else{
-        bool canDo[5] = { 1, 1, can_double_down(), hand.can_split(), can_surrender() };
-
-        std::cout<<"Alegere"<<" "<<_name<<": ";
-        int input;
-        while(true)
-        {
-            try{
-                if(!(std::cin >> input) || input < 1 || input > 5 || !canDo[input-1]) throw InvalidActionException();
-                break;
-            }
-            catch(InvalidActionException er)
-            {
-                std::cin.clear();
-                std::cin.ignore(1000, '\n');
-                std::cout << er.what()<< '\n';
-            }
-        }
-        switch (input) {
-        case 1: hit(); break;
-        case 2: stand(); break;
-        case 3: doubleDown(); break;
-        case 4: split(jucatori); break;
-        case 5: surrender(); break;
-        }
-
-    }
-}
-
-
-void Dealer::choice(std::list<Player*>& jucatori)
-{
-    if (hand.sum()<17 &&
-        !(hand.hasAce() && hand.sum()+10>17 && hand.sum()+10<=21)) 
-        {
-            std::cout<<name()<<" "<<"a tras o carte";
-            hit();
-        }
-    else stand();
-}
 
 bool Player::can_take_cards()
 {

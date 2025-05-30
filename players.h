@@ -2,6 +2,7 @@
 #define PLAYERS_
 
 #include "cards.h"
+#include "choicestrat.h"
 
 extern Deck current_deck;
 
@@ -10,6 +11,8 @@ class Player
 protected:
     Hand hand;
     std::string _name;
+    ChoiceStrategy* strategy;
+    friend class RealPlayerStrategy;
 public:
     Player(std::string _name="player"): _name(_name){}
     virtual ~Player() = default;
@@ -25,7 +28,11 @@ public:
     void stop() {hand.stop();}
     void hit();
     void stand();
-    virtual void choice(std::list<Player*>& jucatori) = 0;
+    void choice(std::list<Player*>& jucatori)
+    {
+        if (strategy)
+            strategy->choice(this, jucatori);
+    }
 
     int checkState();
 
@@ -36,11 +43,13 @@ public:
 
 class Dealer : public Player
 {
+    friend class DealerStrategy;
     public:
-    Dealer(std::string _name="player"): Player(_name){}
+    Dealer(std::string _name="player"): Player(_name)
+    {
+        strategy = new DealerStrategy();
+    }
     Player* clone() const;
-
-    void choice(std::list<Player*>& jucatori);
     
     void show_cards(bool hide_second_card) const;
     
@@ -60,7 +69,6 @@ public:
     void doubleDown();
     void surrender();// de inclocuit cu partea comentata
     virtual void split(std::list<Player*>& jucatori);
-    void choice(std::list<Player*>& jucatori);
     //detalii
     bool can_double_down();
     bool can_surrender();

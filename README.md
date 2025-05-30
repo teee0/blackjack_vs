@@ -13,6 +13,7 @@ https://stackoverflow.com/questions/3279543/what-is-the-copy-and-swap-idiom
 https://refactoring.guru/design-patterns/factory-comparison
 https://www.geeksforgeeks.org/factory-method-pattern-c-design-patterns/
 https://stackoverflow.com/questions/9323903/most-efficient-elegant-way-to-clip-a-number
+https://stackoverflow.com/questions/3516196/testing-whether-an-iterator-points-to-the-last-item
 
 *ierarhie de clase:
 baza: Player
@@ -26,7 +27,7 @@ Card:
 Hand:
 Deck:
 
-*funcție virtuală pură: choice -- pt player e prompt la tastatură
+*strategy pattern: choice -- pt player e prompt la tastatură
 												  		 -- pt dealer este un algoritm
 												show_cards --simpla afisare ce tine cont ca a doua carte a dealerului este ascunsa in prima runda
 

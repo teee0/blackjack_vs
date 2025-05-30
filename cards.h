@@ -35,6 +35,7 @@ class Card
     int number;
     int suit;
     int real_value;
+    SuitFormat suit_format;
 public:
     Card(int number,int suit);
     bool operator==(const Card& c) const
