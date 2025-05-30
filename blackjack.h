@@ -18,6 +18,7 @@ public:
     Runda& operator=(Runda ob);
 
     void start();
+    void end();
     void first_round();
     void game_loop();
     bool is_stalled();

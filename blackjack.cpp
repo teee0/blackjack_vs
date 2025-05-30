@@ -51,85 +51,77 @@ void Runda::game_loop()
     {
         std::cout << "\n" << std::setfill('~') << std::setw(40) << "" << std::setw(40) <<"\n";
         for(auto jucator : jucatori)
-        {
-            std::cout << '\n' << jucator->name() << ":\n";
-            jucator->show_cards(false);
-
-            int state = jucator->checkState();
-
-            if (state == LOST)
+        {            
+            if (jucator->last_state_text() == "joacă")
             {
-                std::cout << jucator->last_state_text() << '\n';
-                jucator->stop();
-            }
-            else if (state == WON)
-            {
-                std::cout << jucator->last_state_text() << '\n';
-                jucator->stop();
-                if (jucator->name() != "dealer")
+                std::cout << '\n' << jucator->name() << ":\n";
+                jucator->show_cards(false);
+
+                int state = jucator->checkState();
+                if (state == PLAYING) 
                 {
-                    RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
-                    rp->add_to_deposit(rp->wager());
+                    jucator->choice(jucatori);//alegerea jucatorului
+                    std::cout << '\n' << jucator->name() << ":\n";
+                    jucator->show_cards(false);
+                }
+                if(jucator->checkState() != PLAYING) {
+                    std::cout << jucator->last_state_text() << '\n';
                 }
             }
-            else jucator->choice(jucatori);
-            //alegerea jucatorului
-            std::cout << '\n' << jucator->name() << ":\n";
-            jucator->show_cards(false);
-            if(jucator->checkState()!=0)
-            {
-                std::cout<<jucator->last_state_text()<<'\n';
-            }
-
         }
         //else-uri de last loop
         if(jucatori.back()->checkState()==1)
         {
-            for(auto jucator:jucatori){
-            if(jucator->checkState()!=1)
-            {
-                std::cout<<jucator->name()<<": ";
-                std::cout<<" a câștigat!\n";
-                if(jucator->name() != "dealer")
-                {
-                    RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
-                    rp->add_to_deposit(rp->wager());
-                }
-            }
-            
-            }
-            return;
+            for(auto jucator:jucatori)
+                if(jucator->checkState()!=1)//inclusiv fara dealer
+                    jucator->set_last_state_text("a câștigat");
+
+            end(); return;
         }
         if(is_stalled() )
         {
             bool castiga_dealeru=true;
-            for(int i=0; i<jucatori.size()-1; i++)
+            for (auto jucator : jucatori)
             {
-                auto jucator = jucatori[i];
-                std::cout<<jucator->name();
-                if(jucator->checkState()!=1 && jucator->score() > jucatori.back()->score())
+                if (jucator->name() != "dealer")
                 {
-                    std::cout <<" a câștigat!\n";
-                    if(jucator->name() != "dealer")
+                    if (jucator->checkState()!=1 && jucator->score() >= jucatori.back()->score())
                     {
-                        RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
-                        rp->add_to_deposit(rp->wager());
+                        jucator->set_last_state_text("a câștigat");
+                        castiga_dealeru=false;
                     }
-                    castiga_dealeru=false;
+                    else jucator->set_last_state_text("a pierdut");
                 }
-                else
-                    std::cout<< " a pierdut!\n";
             }   
-            if(castiga_dealeru) std::cout<<"dealerul câștigă!\n";
-            return;
+            jucatori.back()->set_last_state_text((castiga_dealeru)?"a câștigat":"a pierdut");
+            end(); return;
         } 
     }
         
 }
+
+void Runda::end()
+{
+    std::cout << "\n" << std::setfill('~') << std::setw(40) << "" << std::setw(40) <<"\n";
+    for(auto jucator : jucatori)
+    {
+        std::cout << '\n' << jucator->name() <<": "<< jucator->last_state_text() << "!\n";
+        jucator->show_cards(false);
+
+        if (jucator->name() != "dealer" 
+            && jucator->last_state_text() != "a pierdut"  
+            && jucator->last_state_text() != "a dat surrender"
+        ){
+            RealPlayer* rp = dynamic_cast<RealPlayer*>(jucator);
+            rp->add_to_deposit(rp->wager());
+        }
+    }
+}
+
 bool Runda::is_stalled()
 {
     bool rez=0;
     for (auto& jucator: jucatori)
         rez|=jucator->can_take_cards();
-    return rez;
+    return !rez;
 }

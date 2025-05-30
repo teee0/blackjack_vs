@@ -53,13 +53,20 @@ int Player::checkState()
     /*0=nimic
       1=pierdut
       2=câștigat*/
-    if      (hand.sum() > 21) {hand.set_last_state_text ("a pierdut!\n"); stop(); return 1;}
-    else if (hand.size() == 5) hand.set_last_state_text ("a câștigat având 5 cărți!\n");
-    else if (hand.sum() == 21 || (hand.sum() + 10 == 21 && hand.hasAce())) hand.set_last_state_text ("a câștigat cu un blackjack!\n");
+    if (hand.sum() > 21) {
+        hand.set_last_state_text ("a pierdut"); 
+        stop(); 
+        return 1;
+    }
+    else if (hand.size() == 5) 
+        hand.set_last_state_text ("a câștigat având 5 cărți");
+    else if (hand.sum() == 21 || (hand.sum() + 10 == 21 && hand.hasAce())) 
+        hand.set_last_state_text ("a câștigat cu un blackjack");
     else if (hand.sum() + 10 == 21 && hand.hasAce() && hand.size() == 2) 
-                               hand.set_last_state_text ("a câștigat cu un blackjack din prima!\n");  
+        hand.set_last_state_text ("a câștigat cu un blackjack din prima");  
     else return 0; 
     stop();
+
     return 2; 
 }
 
@@ -149,9 +156,15 @@ std::string actions = "\
 void RealPlayer::choice(std::vector<Player*>& jucatori)
 {
     std::cout<<actions<<'\n';
-    if (!hand.can_take_cards()) std::cout<<_name<<" nu mai poate lua cărți\n";
+    if (!hand.can_take_cards())
+    {
+        std::cout<<_name<<" nu mai poate lua cărți\n";
+        for (auto jucator : jucatori)
+            std::cout<<jucator->name()<<" "<<jucator->can_take_cards()<< "\n";
+    }
     else{
         bool canDo[5] = { 1, 1, can_double_down(), hand.can_split(), can_surrender() };
+
 
         std::cout<<"Alegere"<<" "<<_name<<": ";
         int input;
